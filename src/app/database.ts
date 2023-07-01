@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, addDoc, getDocs, where } from "firebase/firestore";
 import Activity from "./models/Activity";
 
 const firebaseConfig = {
@@ -14,15 +14,22 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getFirestore(app);
-const dbInstance = collection(database, 'activities');
+const activities = collection(database, "activities");
+const users = collection(database, "users");
 
 const getActivities = async () => {
-  var res = await getDocs(dbInstance);
+  var res = await getDocs(activities);
   return res.docs.map(doc => doc.data());
 };
 
 const addActivity = async ( activity: Activity) => {
-  return await addDoc(dbInstance, activity); 
+  return await addDoc(activities, activity); 
 }
 
-export { app, database, dbInstance, addActivity, getActivities };
+const authUser = async (mobile: string): Promise<boolean> => {
+  const userQuery = query(users, where("mobile", "==", mobile));
+  const data = await getDocs(userQuery);
+  return !!data; // !! converts data to a boolean value (true or false)
+};
+
+export { app, database, activities as dbInstance, addActivity, getActivities, authUser };
