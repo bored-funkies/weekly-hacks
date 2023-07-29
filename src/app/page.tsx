@@ -1,17 +1,37 @@
 'use client';
 import { authUser } from './database';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getFromLocalStorage, setToLocalStorage } from './utils/localStorageUtils';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
 
+  const router = useRouter();
   const [mobile, setMobile] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (localStorage && getFromLocalStorage('isLoggedIn') == "true") {
+      setIsLoggedIn(true);
+    }
+  }, [])
 
   const authenticate = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
-      const result = await authUser(mobile);
-      setMobile(''); // reset input field
-      console.log('Login successful', result);
+      if (isLoggedIn) {
+        router.push('/dashboard');
+      } else {
+        const result = await authUser(mobile);
+        setMobile(''); // reset input field
+        if (localStorage) {
+          setToLocalStorage('isLoggedIn', true);
+          setToLocalStorage('mobile', mobile);
+        }
+        console.log('Login successful', result);
+        //redirect to dashboard
+        router.push('/dashboard');
+      }
     } catch (error) {
       console.log('Login failed', error);
     }
@@ -45,11 +65,10 @@ export default function Login() {
             </label>
             <div className="mt-2.5">
               <input
-                type="text"
+                type="tel"
                 name="mobile"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
-                autoComplete="mobile"
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>

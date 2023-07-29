@@ -1,9 +1,7 @@
-import ActivityType from "./ActivityType";
-
 export default interface Activity {
-    id: string,
+    id: number,
     mobile: string,
-    type: ActivityType,
+    type: string,
     link: string,
     description: string,
     timestamp: Date
