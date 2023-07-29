@@ -3,12 +3,20 @@ import { authUser } from './database';
 import { useEffect, useState } from 'react';
 import { getFromLocalStorage, setToLocalStorage } from './utils/localStorageUtils';
 import { useRouter } from 'next/navigation';
+import SuccessToast from './components/successToast'
+import ErrorToast from './components/errorToast'
 
 export default function Login() {
 
   const router = useRouter();
   const [mobile, setMobile] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSuccessToastVisible, setSuccessToastVisible] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [successTitle, setSuccessTitle] = useState('')
+  const [isErrorToastVisible, setErrorToastVisible] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [errorTitle, setErrorTitle] = useState('')
 
   useEffect(() => {
     if (localStorage && getFromLocalStorage('isLoggedIn') == "true") {
@@ -23,17 +31,27 @@ export default function Login() {
         router.push('/dashboard');
       } else {
         const result = await authUser(mobile);
-        setMobile(''); // reset input field
         if (localStorage) {
           setToLocalStorage('isLoggedIn', true);
           setToLocalStorage('mobile', mobile);
         }
-        console.log('Login successful', result);
+        setSuccessMessage('Redirecting...')
+        setSuccessTitle('Login successful')
+        setSuccessToastVisible(true)
+        setTimeout(() => {
+          setSuccessToastVisible(false)
+          setMobile(''); // reset input field
+        }, 1000)
         //redirect to dashboard
         router.push('/dashboard');
       }
     } catch (error) {
-      console.log('Login failed', error);
+      setErrorMessage(`Please try again, ${error}`);
+      setErrorTitle('Login failed')
+      setErrorToastVisible(true)
+      setTimeout(() => {
+        setErrorToastVisible(false)
+      }, 5000)
     }
   }
 
@@ -83,6 +101,8 @@ export default function Login() {
           </button>
         </div>
       </form>
+      <SuccessToast isSuccessToastVisible={isSuccessToastVisible} setSuccessToastVisible={setSuccessToastVisible} successMessage={successMessage} successTitle={successTitle} />
+      <ErrorToast isErrorToastVisible={isErrorToastVisible} setErrorToastVisible={setErrorToastVisible} errorMessage={errorMessage} errorTitle={errorTitle} />
     </div>
   )
 }
