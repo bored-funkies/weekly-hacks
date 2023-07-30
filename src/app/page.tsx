@@ -22,15 +22,15 @@ export default function Login() {
       if (isLoggedIn) {
         router.push('/dashboard');
       } else {
-        const result = await authUser(mobile);
+        const isAuthUser = await authUser(mobile);
         setMobile(''); // reset input field
-        if (localStorage) {
-          setToLocalStorage('isLoggedIn', true);
-          setToLocalStorage('mobile', mobile);
+        if(isAuthUser){
+          if (localStorage) {
+            setToLocalStorage('isLoggedIn', true);
+            setToLocalStorage('mobile', mobile);
+          }
+          router.push('/dashboard');//redirect to dashboard
         }
-        console.log('Login successful', result);
-        //redirect to dashboard
-        router.push('/dashboard');
       }
     } catch (error) {
       console.log('Login failed', error);
