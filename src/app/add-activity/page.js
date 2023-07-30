@@ -30,7 +30,7 @@ export default function Login() {
         setLink('');
     }
 
-    const addNewActivity = async (e: { preventDefault: () => void; }) => {
+    const addNewActivity = async (e) => {
         e.preventDefault();
         const activityObj = {
             id: Math.random(),

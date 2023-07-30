@@ -29,6 +29,9 @@ const addActivity = async ( activity: Activity) => {
 const authUser = async (mobile: string): Promise<boolean> => {
   const userQuery = query(users, where("mobile", "==", mobile));
   const data = await getDocs(userQuery);
+  if(data.empty){
+    throw "Invalid User";
+  }
   return !data.empty; // If result is empty there is no user with that mobile no so return false
 };
 
