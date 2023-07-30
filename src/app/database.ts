@@ -3,12 +3,12 @@ import { getFirestore, collection, query, addDoc, getDocs, where } from "firebas
 import Activity from "./models/Activity";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAde_CPYpcIkBX_MZDtxTKWpR18kHuRsWQ",
+  apiKey: process.env.APIKEY,
   authDomain: "weekly-hacks.firebaseapp.com",
   projectId: "weekly-hacks",
   storageBucket: "weekly-hacks.appspot.com",
-  messagingSenderId: "291373710372",
-  appId: "1:291373710372:web:f763bb24d07051142c6cb1",
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APPID,
   measurementId: "G-81HR4FH873"
 };
 
