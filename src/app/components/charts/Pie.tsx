@@ -7,10 +7,12 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors);
 
 export interface PieChartProps {
   data: KeyValuePair[],
+  title?: string,
+  legend?: boolean,
   label: string
 }
 
-export default function PieChart({ data, label = "Count" }: PieChartProps) {
+export default function PieChart({ data, title, legend = true, label = "Count" }: PieChartProps) {
 
   const labels: string[] = [], values: number[] = [], colors: string[] = [];
   
@@ -31,5 +33,18 @@ export default function PieChart({ data, label = "Count" }: PieChartProps) {
     ],
   };
 
-  return <Pie style={{ height: "100%", width: "100%" }} data={chartData} />
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: legend
+      },
+      title: {
+        display: !!title,
+        text: title,
+      },
+    },
+  };
+
+  return <Pie data={chartData} options={options}/>
 }
