@@ -85,7 +85,7 @@ export default function Login() {
                     <div className="sm:col-span-2">
                         <label htmlFor="submission-type" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What activity for this week?</label>
                         <select name="submission-type" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-                        dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e) => setType(e.target.value)}
+                        dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e) => setType(e.target.value)} value={type}
                             defaultValue="Project"
                         >
                             <option value="Project">Project</option>
@@ -104,6 +104,7 @@ export default function Login() {
                             <input
                                 type="text"
                                 name="link"
+                                value={link}
                                 onChange={(e) => setLink(e.target.value)}
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
@@ -117,6 +118,7 @@ export default function Login() {
                             <textarea
                                 name="description"
                                 rows={3}
+                                value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 defaultValue={''}
