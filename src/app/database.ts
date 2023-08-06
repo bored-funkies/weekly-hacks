@@ -45,6 +45,23 @@ const getFilteredData = async (collectionName: string, filters: FilterConstraint
   return (await getDocs(tempQuery)).docs.map(doc => doc.data());
 }
 
+//ToDo: Advanced aggregation function... We can use based on the future requirement... Don't delete!
+// const getAggregatedResult = async(collectionName: string, aggregations: Aggregation[], filters: FilterConstraint[]): Promise<any[]> => {
+    //reference - https://stackoverflow.com/questions/35506433/grouping-by-multiple-fields-per-object#:~:text=groupBy(people%2C%20function%20(person,join('%7C')%3B%20%7D)%3B
+//   let tempCollection = collection(database, collectionName);
+//   let queryConstraints: QueryFieldFilterConstraint[] = filters.map( a => where(a.column, a.condition, a.value));
+//   let tempQuery = query(tempCollection, ...queryConstraints);
+//   let res = await getDocs(tempQuery);
+//   let grouped: any = {};
+//   res.docs.forEach(function (a) {
+//     aggregations.reduce(function (o, g, i) {                           
+//         o[a.get(g.column)] = o[a.get(g.column)] || (i + 1 === aggregations.length ? [] : {}); 
+//         return o[a.get(g.column)];                                          
+//     }, grouped).push(a);
+//   });
+//   return grouped;
+// }
+
 const addActivity = async ( activity: Activity) => {
   return await addDoc(activities, activity); 
 }
