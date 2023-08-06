@@ -1,0 +1,30 @@
+.stats-cont{
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 300px;
+    padding: 5px;
+}
+
+.last-week-stat{
+    flex: 1.5;
+}
+
+.current-week-stat{
+    flex: 1.5;
+}
+
+.last-month-leader-board-stat{
+    flex: 2;
+}
+
+.chart-card-style{
+    border: 1px solid rgb(31 41 55 / 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    min-width: 300px;
+    height: 250px;
+}
