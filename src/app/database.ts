@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, addDoc, getDocs, where, QueryFieldFilterConstraint } from "firebase/firestore";
+import { getFirestore, collection, query, addDoc, getDocs, where, QueryFieldFilterConstraint, DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
 import Activity from "./models/Activity";
 import FilterConstraint from "./models/FilterConstraint";
 import { KeyValuePair } from "./utils/charts";
+import User from "./models/User";
 
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
@@ -66,13 +67,31 @@ const addActivity = async ( activity: Activity) => {
   return await addDoc(activities, activity); 
 }
 
-const authUser = async (mobile: string): Promise<boolean> => {
-  const userQuery = query(users, where("mobile", "==", mobile));
-  const data = await getDocs(userQuery);
-  if(data.empty){
-    throw "Invalid User";
+export const userConverter = {
+  toFirestore(user: User): DocumentData {
+    return { name: user.name, emailId: user.emailId, mobile: user.mobile };
+  },
+
+  fromFirestore(
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions
+  ): User {
+    const data = snapshot.data(options)!;
+    return { name: data.name, emailId: data.emailId, mobile: data.mobile }
   }
-  return !data.empty; // If result is empty there is no user with that mobile no so return false
 };
 
-export { app, database, activities as dbInstance, addActivity, getActivities, authUser, getAggregatedActivities, getFilteredData};
+const getUser = async (mobile: string): Promise<User> => {
+  const userQuery = query(users, where("mobile", "==", mobile)).withConverter(userConverter);
+  return (await getDocs<User>(userQuery)).docs?.[0]?.data();
+}
+
+const authUser = async (mobile: string): Promise<boolean> => {
+  const data = await getUser(mobile);
+  if(data){
+    throw "Invalid User";
+  }
+  return !data; // If result is empty there is no user with that mobile no so return false
+};
+
+export { app, database, activities as dbInstance, addActivity, getActivities, authUser, getAggregatedActivities, getFilteredData, getUser};
