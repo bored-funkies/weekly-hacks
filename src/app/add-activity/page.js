@@ -1,10 +1,11 @@
 'use client';
 import { addActivity } from '../database';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { getFromLocalStorage } from '../utils/localStorageUtils';
 import Link from 'next/link';
 import SuccessToast from '../components/successToast'
 import ErrorToast from '../components/errorToast'
+import UserContext from './../contexts/UserContext';
 
 export default function Login() {
     const [mobile, setMobile] = useState('');
@@ -17,6 +18,7 @@ export default function Login() {
     const [isErrorToastVisible, setErrorToastVisible] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
     const [errorTitle, setErrorTitle] = useState('')
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         if (localStorage) {
@@ -34,7 +36,8 @@ export default function Login() {
         e.preventDefault();
         const activityObj = {
             id: Math.random(),
-            mobile,
+            name: user.name,
+            mobile: user.mobile,
             type,
             description,
             link,
