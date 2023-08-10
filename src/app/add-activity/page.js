@@ -6,6 +6,7 @@ import Link from 'next/link';
 import SuccessToast from '../components/successToast'
 import ErrorToast from '../components/errorToast'
 import UserContext from './../contexts/UserContext';
+import moment from 'moment/moment';
 
 export default function Login() {
     const [mobile, setMobile] = useState('');
@@ -41,7 +42,7 @@ export default function Login() {
             type,
             description,
             link,
-            timestamp: new Date()
+            timestamp: moment().local().format('YYYY-MM-DDTHH:mm:ss')
         }
         try {
             await addActivity(activityObj);
