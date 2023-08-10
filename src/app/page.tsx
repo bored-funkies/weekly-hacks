@@ -1,10 +1,11 @@
 'use client';
-import { authUser } from './database';
-import { useEffect, useState } from 'react';
+import { authUser, getUser } from './database';
+import { useContext, useEffect, useState } from 'react';
 import { getFromLocalStorage, setToLocalStorage } from './utils/localStorageUtils';
 import { useRouter } from 'next/navigation';
 import SuccessToast from './components/successToast'
 import ErrorToast from './components/errorToast'
+import UserContext from './contexts/UserContext';
 
 export default function Login() {
 
@@ -17,12 +18,20 @@ export default function Login() {
   const [isErrorToastVisible, setErrorToastVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [errorTitle, setErrorTitle] = useState('')
+  const {user, setUser} = useContext(UserContext);
 
   useEffect(() => {
     if (localStorage && getFromLocalStorage('isLoggedIn') == "true") {
       setIsLoggedIn(true);
+      setUserStore(getFromLocalStorage("mobile"));
     }
-  }, [])
+  }, []);
+
+  async function setUserStore(mobile: string | null){
+    if(mobile){
+      setUser(await getUser(mobile));
+    }
+  }
 
   const authenticate = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -31,6 +40,7 @@ export default function Login() {
         router.push('/dashboard');
       } else {
         const isAuthUser = await authUser(mobile);
+        setUserStore(mobile);
         setMobile(''); // reset input field
           if (localStorage) {
             setToLocalStorage('isLoggedIn', true);
