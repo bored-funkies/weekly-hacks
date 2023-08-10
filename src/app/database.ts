@@ -29,11 +29,11 @@ const getAggregatedActivities = async (filters: FilterConstraint[]): Promise<Key
   let data = await getFilteredData("activities", filters);
   let grouped: any = {};
   data.forEach(function (a) {
-      if(grouped[a.mobile] !== undefined){
-        grouped[a.mobile]++;
+      if(grouped[a.name] !== undefined){
+        grouped[a.name]++;
       }
       else{
-        grouped[a.mobile] = 1;
+        grouped[a.name] = 1;
       };
   });
   return Object.entries(grouped).map<KeyValuePair>(([key, value]) => ({key, value: <number>value}));
