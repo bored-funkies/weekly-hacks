@@ -10,7 +10,7 @@ import moment from 'moment/moment';
 
 export default function Login() {
     const [mobile, setMobile] = useState('');
-    const [type, setType] = useState('');
+    const [type, setType] = useState('Project');
     const [link, setLink] = useState('');
     const [description, setDescription] = useState('');
     const [isSuccessToastVisible, setSuccessToastVisible] = useState(false)

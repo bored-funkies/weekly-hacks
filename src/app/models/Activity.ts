@@ -5,5 +5,5 @@ export default interface Activity {
     type: string,
     link: string,
     description: string,
-    timestamp: Date
+    timestamp: string
 }
