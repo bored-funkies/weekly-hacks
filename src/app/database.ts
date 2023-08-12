@@ -81,15 +81,19 @@ const addActivity = async ( activity: Activity) => {
 
 const getUser = async (mobile: string): Promise<User> => {
   const userQuery = query(users, where("mobile", "==", mobile)).withConverter(genericConverter<User>());
-  return (await getDocs<User>(userQuery)).docs?.[0]?.data();
+  let user = (await getDocs<User>(userQuery)).docs?.[0]?.data();
+  if(!user){//If data not found through exception.
+    throw "User Not Found";
+  }
+  return user;
 }
 
-const authUser = async (mobile: string): Promise<boolean> => {
-  const data = await getUser(mobile);
-  if(data){
-    throw "Invalid User";
-  }
-  return !data; // If result is empty there is no user with that mobile no so return false
-};
+// const authUser = async (mobile: string): Promise<boolean> => {
+//   const data = await getUser(mobile);
+//   if(!data){
+//     throw "Invalid User";
+//   }
+//   return !!data; // If result is empty there is no user with that mobile no so return false
+// };
 
-export { app, database, activities as dbInstance, addActivity, getActivities, authUser, getAggregatedActivities, getFilteredData, getUser};
+export { app, database, activities as dbInstance, addActivity, getActivities, getAggregatedActivities, getFilteredData, getUser};

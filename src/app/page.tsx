@@ -1,5 +1,5 @@
 'use client';
-import { authUser, getUser } from './database';
+import { getUser } from './database';
 import { useContext, useEffect, useState } from 'react';
 import { getFromLocalStorage, setToLocalStorage } from './utils/localStorageUtils';
 import { useRouter } from 'next/navigation';
@@ -24,6 +24,7 @@ export default function Login() {
     if (localStorage && getFromLocalStorage('isLoggedIn') == "true") {
       setIsLoggedIn(true);
       setUserStore(getFromLocalStorage("mobile"));
+      router.push('/dashboard');
     }
   }, []);
 
@@ -39,8 +40,8 @@ export default function Login() {
       if (isLoggedIn) {
         router.push('/dashboard');
       } else {
-        const isAuthUser = await authUser(mobile);
-        setUserStore(mobile);
+        let user = await getUser(mobile);
+        setUser(user);
         setMobile(''); // reset input field
           if (localStorage) {
             setToLocalStorage('isLoggedIn', true);
@@ -63,6 +64,12 @@ export default function Login() {
         setErrorToastVisible(false)
       }, 5000)
     }
+  }
+
+  function loginAsGuest(e: { preventDefault: () => void; }){
+    e.preventDefault();
+    setUser(null);
+    router.push('/dashboard');
   }
 
   return (
@@ -102,12 +109,17 @@ export default function Login() {
             </div>
           </div>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 text-center">
           <button
             onClick={authenticate}
-            className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
+            className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Login
+          </button>
+          <p className="my-[15px]">(Or)</p>
+          <button
+            onClick={loginAsGuest}
+            className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Guest
           </button>
         </div>
       </form>
