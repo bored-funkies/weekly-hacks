@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, addDoc, getDocs, where, QueryFieldFilterConstraint, DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+import { getFirestore, collection, query, addDoc, getDocs, where, QueryFieldFilterConstraint, DocumentData, QueryDocumentSnapshot, SnapshotOptions, orderBy, QueryOrderByConstraint } from "firebase/firestore";
 import Activity from "./models/Activity";
 import FilterConstraint from "./models/FilterConstraint";
 import { KeyValuePair } from "./utils/charts";
 import User from "./models/User";
+import SortOption from "./models/SortOption";
 
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
@@ -48,10 +49,11 @@ const genericConverter = <T>() => ({
   }
 });
 
-const getFilteredData = async<T> (collectionName: string, filters: FilterConstraint[]): Promise<T[]> => {
+const getFilteredData = async<T> (collectionName: string, filters: FilterConstraint[], sortOptions: SortOption[] = []): Promise<T[]> => {
   let tempCollection = collection(database, collectionName);
+  let orderConstraints: QueryOrderByConstraint[] = sortOptions.map(s => orderBy(s.name, s.order));
   let queryConstraints: QueryFieldFilterConstraint[] = filters.map(a => where(a.column, a.condition, a.value));
-  let tempQuery = query(tempCollection, ...queryConstraints).withConverter(genericConverter<T>());
+  let tempQuery = query(tempCollection, ...queryConstraints, ...orderConstraints).withConverter(genericConverter<T>());
   return (await getDocs<T>(tempQuery)).docs.map(doc => doc.data());
 }
 
