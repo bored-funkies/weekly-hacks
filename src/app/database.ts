@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, addDoc, getDocs, where, QueryFieldFilterConstraint, DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+import { getFirestore, collection, query, addDoc, getDocs, where, QueryFieldFilterConstraint, DocumentData, QueryDocumentSnapshot, SnapshotOptions, orderBy, QueryOrderByConstraint } from "firebase/firestore";
 import Activity from "./models/Activity";
 import FilterConstraint from "./models/FilterConstraint";
 import { KeyValuePair } from "./utils/charts";
 import User from "./models/User";
+import SortOption from "./models/SortOption";
 
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
@@ -26,7 +27,7 @@ const getActivities = async () => {
 };
 
 const getAggregatedActivities = async (filters: FilterConstraint[]): Promise<KeyValuePair[]> => {
-  let data = await getFilteredData("activities", filters);
+  let data = await getFilteredData<Activity>("activities", filters);
   let grouped: any = {};
   data.forEach(function (a) {
       if(grouped[a.name] !== undefined){
@@ -39,11 +40,21 @@ const getAggregatedActivities = async (filters: FilterConstraint[]): Promise<Key
   return Object.entries(grouped).map<KeyValuePair>(([key, value]) => ({key, value: <number>value}));
 }
 
-const getFilteredData = async (collectionName: string, filters: FilterConstraint[]): Promise<any[]> => {
+const genericConverter = <T>() => ({
+  toFirestore(data: T): DocumentData {
+      return data as DocumentData;
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot<DocumentData>): T {
+      return snapshot.data() as T;
+  }
+});
+
+const getFilteredData = async<T> (collectionName: string, filters: FilterConstraint[], sortOptions: SortOption[] = []): Promise<T[]> => {
   let tempCollection = collection(database, collectionName);
+  let orderConstraints: QueryOrderByConstraint[] = sortOptions.map(s => orderBy(s.name, s.order));
   let queryConstraints: QueryFieldFilterConstraint[] = filters.map(a => where(a.column, a.condition, a.value));
-  let tempQuery = query(tempCollection, ...queryConstraints);
-  return (await getDocs(tempQuery)).docs.map(doc => doc.data());
+  let tempQuery = query(tempCollection, ...queryConstraints, ...orderConstraints).withConverter(genericConverter<T>());
+  return (await getDocs<T>(tempQuery)).docs.map(doc => doc.data());
 }
 
 //ToDo: Advanced aggregation function... We can use based on the future requirement... Don't delete!
@@ -67,22 +78,9 @@ const addActivity = async ( activity: Activity) => {
   return await addDoc(activities, activity); 
 }
 
-export const userConverter = {
-  toFirestore(user: User): DocumentData {
-    return { name: user.name, emailId: user.emailId, mobile: user.mobile };
-  },
-
-  fromFirestore(
-    snapshot: QueryDocumentSnapshot,
-    options: SnapshotOptions
-  ): User {
-    const data = snapshot.data(options)!;
-    return { name: data.name, emailId: data.emailId, mobile: data.mobile }
-  }
-};
 
 const getUser = async (mobile: string): Promise<User> => {
-  const userQuery = query(users, where("mobile", "==", mobile)).withConverter(userConverter);
+  const userQuery = query(users, where("mobile", "==", mobile)).withConverter(genericConverter<User>());
   return (await getDocs<User>(userQuery)).docs?.[0]?.data();
 }
 
