@@ -19,6 +19,7 @@ export default function Dashboard() {
     const [lastWeekStats, setLastWeekStats] = useState<KeyValuePair[]|undefined>(undefined);
     const [leaderBoardStats, setLeaderBoardStats] = useState<KeyValuePair[]|undefined>(undefined);
     const [tableData, setTableData] = useState<Activity[]|undefined>(undefined);
+    const [isChartVisible, setIsChartVisible] = useState(true);
 
     useEffect( () => {
         prepareStats(); 
@@ -42,12 +43,13 @@ export default function Dashboard() {
         setTableData(data);
     }
 
+    function toggleChartVisibility(){
+        setIsChartVisible(!isChartVisible);
+    }
+
     return (
         <div>
-            <button onClick={() => router.push('/add-activity')}
-                className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >Add an activity</button>
-            <div className="stats-cont">
+            <div className={`stats-cont ${!isChartVisible ? "hide-chart": ""}`}>
                 <div className="last-week-stat chart-card-style">
                     {lastWeekStats === undefined ? <Loader title="Loading Last Week Activities Trends"/> :
                         lastWeekStats.length > 0 ? <Pie data={lastWeekStats} label="Activities Count" title="Last Week Activities" legend={false}/> : <div>No activities</div>}
@@ -61,7 +63,15 @@ export default function Dashboard() {
                         leaderBoardStats.length > 0 ? <Bar data={leaderBoardStats} label="Activities Count"  title="Last Month Leader Board Trends" legend={false}/> : <div>No activities</div>}
                 </div>
             </div>
-            <div className="relative overflow-x-auto text-center shadow-md sm:rounded-lg mx-[10px]">
+            <div className="actions-cont">
+                <button onClick={() => router.push('/add-activity')}
+                    className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Add an activity</button>
+                <button onClick={toggleChartVisibility}
+                    className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    {isChartVisible?"Hide":"Show"} Stats</button>
+            </div>
+            <div className="table-cont relative overflow-x-auto text-center shadow-md sm:rounded-lg mx-[10px]">
                 <table className="w-full text-sm text-left text-blue-100 dark:text-blue-100">
                     <thead className="text-xs text-white uppercase bg-blue-600 dark:text-white">
                         <tr>

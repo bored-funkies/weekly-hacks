@@ -2,7 +2,31 @@
     display: flex;
     flex-wrap: wrap;
     min-width: 300px;
-    padding: 5px;
+    max-height: 800px;
+    padding: 0px 5px;
+    overflow: hidden;
+    transition: all 1s linear;
+}
+
+.actions-cont{
+    position: relative;
+    display: flex;
+    padding: 0px 5px;
+    width: 300px;
+    float: right;
+}
+
+.table-cont{
+    width: calc(100% - 20px);
+}
+
+.actions-cont button{
+    margin: 5px;
+}
+
+.stats-cont.hide-chart{
+    max-height:  0px;
+    transition: all 1s linear;
 }
 
 .last-week-stat{
