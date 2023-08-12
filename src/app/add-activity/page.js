@@ -3,6 +3,8 @@ import { addActivity } from '../database';
 import { useState, useEffect, useContext } from 'react';
 import { getFromLocalStorage } from '../utils/localStorageUtils';
 import Link from 'next/link';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import SuccessToast from '../components/successToast'
 import ErrorToast from '../components/errorToast'
 import UserContext from './../contexts/UserContext';
@@ -10,6 +12,7 @@ import moment from 'moment/moment';
 
 export default function Login() {
     const [mobile, setMobile] = useState('');
+    const [startDate, setStartDate] = useState(new Date());
     const [type, setType] = useState('Project');
     const [link, setLink] = useState('');
     const [description, setDescription] = useState('');
@@ -42,7 +45,7 @@ export default function Login() {
             type,
             description,
             link,
-            timestamp: moment().local().format('YYYY-MM-DDTHH:mm:ss')
+            timestamp: moment(startDate).local().format('YYYY-MM-DDTHH:mm:ss')
         }
         try {
             await addActivity(activityObj);
@@ -102,6 +105,21 @@ export default function Login() {
                     </div>
                     <div className="col-span-full">
                         <label htmlFor="link" className="block text-sm font-medium leading-6 text-gray-900">
+                            Activity Time
+                        </label>
+                        <div className="mt-2">
+                            <DatePicker
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                                showIcon
+                                selected={startDate}
+                                onChange={(date) => setStartDate(date)}
+                                timeInputLabel="Time:"
+                                dateFormat="MM/dd/yyyy h:mm aa"
+                                showTimeInput/>
+                        </div>
+                    </div>
+                    <div className="col-span-full">
+                        <label htmlFor="link" className="block text-sm font-medium leading-6 text-gray-900">
                             Link
                         </label>
                         <div className="mt-2">
@@ -134,8 +152,7 @@ export default function Login() {
                 <div className="mt-10">
                     <button
                         onClick={addNewActivity}
-                        className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    >
+                        className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         Add Now
                     </button>
                 </div>
