@@ -1,7 +1,7 @@
 "use client";
 import "./dashboard.css";
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Pie from '../components/charts/Pie';
 import Loader from '../components/common/loader';
 import { getAggregatedActivities, getFilteredData } from "../database";
@@ -9,12 +9,13 @@ import Bar from "../components/charts/Bar";
 import { KeyValuePair } from "../utils/charts";
 import DateFilterValues from "../utils/DateFilterValues";
 import Activity from "../models/Activity";
+import UserContext, { UserContextType } from './../contexts/UserContext';
 import moment from "moment";
 import { ColorUtil } from "../utils/colors";
 
 export default function Dashboard() {
     const router = useRouter();
-
+    const { user } = useContext<UserContextType>(UserContext);
     const [currentWeekStats, setCurrentWeekStats] = useState<KeyValuePair[]|undefined>(undefined);
     const [lastWeekStats, setLastWeekStats] = useState<KeyValuePair[]|undefined>(undefined);
     const [leaderBoardStats, setLeaderBoardStats] = useState<KeyValuePair[]|undefined>(undefined);
@@ -64,9 +65,13 @@ export default function Dashboard() {
                 </div>
             </div>
             <div className="actions-cont">
-                <button onClick={() => router.push('/add-activity')}
+                {user ?
+                    <button onClick={() => router.push('/add-activity')}
                     className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    Add an activity</button>
+                        Add an activity</button>:
+                    <button onClick={() => router.push('/')}
+                    className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Login</button>}
                 <button onClick={toggleChartVisibility}
                     className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                     {isChartVisible?"Hide":"Show"} Stats</button>
