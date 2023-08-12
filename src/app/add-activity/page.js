@@ -40,8 +40,8 @@ export default function Login() {
         e.preventDefault();
         const activityObj = {
             id: Math.random(),
-            name: user.name,
-            mobile: user.mobile,
+            name: user?.name,
+            mobile: user?.mobile,
             type,
             description,
             link,

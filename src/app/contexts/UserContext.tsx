@@ -3,15 +3,15 @@ import { createContext, useState } from 'react';
 import User from '../models/User';
 
 interface UserContextType {
-  user: User | {};
-  setUser: (user: User | {}) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
 }
 
-const UserContext = createContext<UserContextType>({user: {}, setUser(){}});
+const UserContext = createContext<UserContextType>({user: null, setUser(){}});
 
 const UserProvider = ({ children }: {children:any}) => {
 
-  const [user, setUser] = useState<User | {}>({});
+  const [user, setUser] = useState<User | null>(null);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
