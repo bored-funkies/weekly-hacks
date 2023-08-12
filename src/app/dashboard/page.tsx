@@ -74,7 +74,7 @@ export default function Dashboard() {
                     {tableData !== undefined &&
                     <tbody>
                     {tableData.map(d => 
-                        <tr className="text-blue-500 border-b border-blue-400">
+                        <tr className="text-blue-500 border-b border-blue-400" key={d.id}>
                             <th scope="row" className="px-6 py-4 font-medium" style={{color:ColorUtil.getColor(d.name)}}>
                                 {d.name}
                             </th>
