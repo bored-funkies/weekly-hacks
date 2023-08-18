@@ -24,7 +24,6 @@ export default function Login() {
     if (localStorage && getFromLocalStorage('isLoggedIn') == "true") {
       setIsLoggedIn(true);
       setUserStore(getFromLocalStorage("mobile"));
-      router.push('/dashboard');
     }
   }, []);
 
